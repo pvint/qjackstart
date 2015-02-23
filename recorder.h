@@ -30,12 +30,14 @@
 #include <jack/jack.h>
 #include <jack/ringbuffer.h>
 #include <sndfile.h>
+#include <math.h>
 #include <QString>
 #include <QThread>
 #include <QMutex>
 #include <QWaitCondition>
 #include <QQueue>
 #include <QDir>
+#include <QTimer>
 
 
 /**
@@ -49,6 +51,8 @@ class Recorder: public QThread
 
     QString jackName;
     QQueue<jack_port_id_t> jackPortRegQueue;
+
+    QTimer *timer;
 
     SNDFILE *sndFile;
     float *currentBuffer;
@@ -68,6 +72,8 @@ class Recorder: public QThread
     jack_ringbuffer_t *jackRingBuffer;
     jack_port_t *jackInputPort1;
     jack_port_t *jackInputPort2;
+    jack_port_t *jackOutputPort1;
+    jack_port_t *jackOutputPort2;
 
     float pauseLevel;
     int pauseActivationMax;
@@ -80,8 +86,10 @@ class Recorder: public QThread
 
     int overruns;
     int sampleRate;
+    int bpm;
 
     bool recording;
+    bool monitoring;
     bool shutdown;
 
     void computeDiskSpace();
@@ -103,12 +111,14 @@ class Recorder: public QThread
     QString getJackConnections(jack_port_t* jackPort);
     void setJackConnections(QString cnxLine, jack_port_t* jackPort);
 
+
 protected:
 
     void run();
     bool isFile() { return sndFile != NULL; }
     bool isPauseLevel() { return leftLevel <= pauseLevel && rightLevel <= pauseLevel; }
     void setShutdown(bool value) { shutdown = value; }
+    void updateTimer();
 
 public:
 
@@ -119,6 +129,13 @@ public:
     int jackSync(jack_transport_state_t state, jack_position_t *pos);
     void jackPortReg(jack_port_id_t port_id, int reg);
     void jackShutdown();
+    void startTransport();
+    void startTransportTimer();
+    int getBPM();
+
+    int leadinBeats;
+    int leadinCount;
+
 
     QString getJackConnections1() {return getJackConnections(jackInputPort1);}
     QString getJackConnections2() {return getJackConnections(jackInputPort2);}
@@ -129,6 +146,8 @@ public:
     bool isShutdown() { return shutdown; }
     void setRecording(bool value) { recording = value; }
     bool isRecording() { return recording; }
+    void setMonitoring(bool value) {monitoring = value; }
+    bool isMonitoring() { return monitoring; }
     bool isPaused() { return pauseActivationCount > pauseActivationMax; }
     void setPauseActivationDelay(int secs) {pauseActivationDelay = secs;}
     int getPauseActivationDelay() {return pauseActivationDelay;}
@@ -144,6 +163,8 @@ public:
     float getPauseLevel() { return pauseLevel; }
     float getLeftLevel() { return leftLevel; }
     float getRightLevel() { return rightLevel; }
+    float getCompLevel() { return fmaxf(rightLevel, leftLevel); }
+
 
 signals:
     void statusChanged();

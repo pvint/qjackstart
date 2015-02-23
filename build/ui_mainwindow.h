@@ -20,6 +20,7 @@
 #include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
 #include <QtGui/QMainWindow>
+#include <QtGui/QSpinBox>
 #include <QtGui/QStatusBar>
 #include <QtGui/QToolButton>
 #include <QtGui/QWidget>
@@ -36,11 +37,14 @@ public:
     QFrame *tabRecord;
     QGridLayout *gridLayout_2;
     QGridLayout *gridLayout_4;
+    QLabel *dbLabel;
     QDoubleSpinBox *thresholdLevelSpin;
-    QLabel *pauseLevelLabel;
     QToolButton *monitorButton;
     QJRMeter *vuMeter;
-    QLabel *dbLabel;
+    QLabel *pauseLevelLabel;
+    QLabel *bpmLabel;
+    QLabel *leadinBarsLabel;
+    QSpinBox *leadinBeatsSpinBox;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -59,6 +63,7 @@ public:
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/qjackstart/qjackstart.png"), QSize(), QIcon::Normal, QIcon::Off);
         MainWindow->setWindowIcon(icon);
+        MainWindow->setAutoFillBackground(false);
         MainWindow->setLocale(QLocale(QLocale::English, QLocale::UnitedStates));
         actionExit = new QAction(MainWindow);
         actionExit->setObjectName(QString::fromUtf8("actionExit"));
@@ -80,6 +85,7 @@ public:
         sizePolicy2.setVerticalStretch(0);
         sizePolicy2.setHeightForWidth(tabRecord->sizePolicy().hasHeightForWidth());
         tabRecord->setSizePolicy(sizePolicy2);
+        tabRecord->setAutoFillBackground(false);
         tabRecord->setFrameShape(QFrame::Panel);
         tabRecord->setFrameShadow(QFrame::Raised);
         tabRecord->setLineWidth(2);
@@ -90,6 +96,12 @@ public:
         gridLayout_4 = new QGridLayout();
         gridLayout_4->setSpacing(6);
         gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
+        dbLabel = new QLabel(tabRecord);
+        dbLabel->setObjectName(QString::fromUtf8("dbLabel"));
+        dbLabel->setMinimumSize(QSize(80, 0));
+
+        gridLayout_4->addWidget(dbLabel, 1, 2, 3, 1);
+
         thresholdLevelSpin = new QDoubleSpinBox(tabRecord);
         thresholdLevelSpin->setObjectName(QString::fromUtf8("thresholdLevelSpin"));
         QSizePolicy sizePolicy3(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
@@ -105,16 +117,11 @@ public:
 
         gridLayout_4->addWidget(thresholdLevelSpin, 1, 1, 1, 1);
 
-        pauseLevelLabel = new QLabel(tabRecord);
-        pauseLevelLabel->setObjectName(QString::fromUtf8("pauseLevelLabel"));
-
-        gridLayout_4->addWidget(pauseLevelLabel, 1, 0, 1, 1);
-
         monitorButton = new QToolButton(tabRecord);
         monitorButton->setObjectName(QString::fromUtf8("monitorButton"));
         monitorButton->setCheckable(true);
 
-        gridLayout_4->addWidget(monitorButton, 2, 0, 1, 1);
+        gridLayout_4->addWidget(monitorButton, 3, 0, 1, 1);
 
         vuMeter = new QJRMeter(tabRecord);
         vuMeter->setObjectName(QString::fromUtf8("vuMeter"));
@@ -122,13 +129,28 @@ public:
         vuMeter->setSizePolicy(sizePolicy1);
         vuMeter->setMinimumSize(QSize(20, 0));
 
-        gridLayout_4->addWidget(vuMeter, 1, 3, 2, 1);
+        gridLayout_4->addWidget(vuMeter, 1, 3, 3, 1);
 
-        dbLabel = new QLabel(tabRecord);
-        dbLabel->setObjectName(QString::fromUtf8("dbLabel"));
-        dbLabel->setMinimumSize(QSize(80, 0));
+        pauseLevelLabel = new QLabel(tabRecord);
+        pauseLevelLabel->setObjectName(QString::fromUtf8("pauseLevelLabel"));
 
-        gridLayout_4->addWidget(dbLabel, 1, 2, 2, 1);
+        gridLayout_4->addWidget(pauseLevelLabel, 1, 0, 1, 1);
+
+        bpmLabel = new QLabel(tabRecord);
+        bpmLabel->setObjectName(QString::fromUtf8("bpmLabel"));
+
+        gridLayout_4->addWidget(bpmLabel, 3, 1, 1, 1);
+
+        leadinBarsLabel = new QLabel(tabRecord);
+        leadinBarsLabel->setObjectName(QString::fromUtf8("leadinBarsLabel"));
+
+        gridLayout_4->addWidget(leadinBarsLabel, 2, 0, 1, 1);
+
+        leadinBeatsSpinBox = new QSpinBox(tabRecord);
+        leadinBeatsSpinBox->setObjectName(QString::fromUtf8("leadinBeatsSpinBox"));
+        leadinBeatsSpinBox->setValue(4);
+
+        gridLayout_4->addWidget(leadinBeatsSpinBox, 2, 1, 1, 1);
 
 
         gridLayout_2->addLayout(gridLayout_4, 2, 0, 1, 1);
@@ -150,9 +172,11 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "QJackStart", 0, QApplication::UnicodeUTF8));
         actionExit->setText(QApplication::translate("MainWindow", "Exit", 0, QApplication::UnicodeUTF8));
-        pauseLevelLabel->setText(QApplication::translate("MainWindow", "Threshold (dB)", 0, QApplication::UnicodeUTF8));
-        monitorButton->setText(QApplication::translate("MainWindow", "Monitor", 0, QApplication::UnicodeUTF8));
         dbLabel->setText(QApplication::translate("MainWindow", "TextLabel", 0, QApplication::UnicodeUTF8));
+        monitorButton->setText(QApplication::translate("MainWindow", "Monitor", 0, QApplication::UnicodeUTF8));
+        pauseLevelLabel->setText(QApplication::translate("MainWindow", "Threshold (dB)", 0, QApplication::UnicodeUTF8));
+        bpmLabel->setText(QApplication::translate("MainWindow", "TextLabel", 0, QApplication::UnicodeUTF8));
+        leadinBarsLabel->setText(QApplication::translate("MainWindow", "Lead-in (Beats)", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

@@ -53,6 +53,9 @@ MainWindow::MainWindow(Recorder *recorder, QWidget *parent)
     ui->vuMeter->setCompLevel(recorder->getPauseLevel());
     ui->statusBar->showMessage(tr("Ready"));
 
+    ui->bpmLabel->setText(QString::number(recorder->getBPM()));
+
+    // Note: this works... use for flashing this->setStyleSheet("background-color:black;");
     connect(recorder, SIGNAL(statusChanged()), this, SLOT(onRecorderStatusChanged()));
 }
 
@@ -68,8 +71,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_monitorButton_clicked()
 {    
-    // FIXME
-    //recorder->setRecording(!recorder->isRecording());
+    recorder->setMonitoring(!recorder->isMonitoring());
 }
 
 
@@ -83,24 +85,32 @@ void MainWindow::on_pauseLevelSpin_valueChanged(double level)
 // the timer slot show recorder state regularly
 void MainWindow::onRecorderStatusChanged()
 {
+    ui->bpmLabel->setText(QString::number(recorder->getBPM()));
     if (recorder->isShutdown()) {
         close();
     }
     else {
         ui->vuMeter->setLeftLevel(recorder->getLeftLevel());
         ui->vuMeter->setRightLevel(recorder->getRightLevel());
-        ui->dbLabel->setText(QString::number(floor(recorder->getRightLevel())) + " dB");
+        ui->dbLabel->setText(QString::number(floor(recorder->getCompLevel())) + " dB");
 
-        if (recorder->isRecording()) {
-            if (recorder->isPaused()) {
-                ui->statusBar->showMessage(tr("Waiting for sound..."));
+        if (recorder->isMonitoring()) {
+            ui->statusBar->showMessage(tr("Waiting for sound..."));
+
+            // check for sound
+            if (recorder->getCompLevel() > ui->thresholdLevelSpin->value())
+            {
+                ui->statusBar->showMessage(tr("Lead in"));
+                recorder->leadinBeats = ui->leadinBeatsSpinBox->value();
+                recorder->startTransportTimer();
+                recorder->setMonitoring(false);
             }
-            else {
-                ui->statusBar->showMessage(tr("Recording..."));
-            }
+
         }
         else {
             ui->statusBar->showMessage(tr("Ready"));
+
+
         }
     }
 }

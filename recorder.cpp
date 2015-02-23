@@ -45,7 +45,10 @@
 #define RCD_JK_INPUT_PORTNAME_1 "monitor_0"
 #define RCD_JK_INPUT_PORTNAME_2 "monitor_1"
 
-#define RCD_WAIT_TIMEOUT_MS 1000
+#define RCD_JK_OUTPUT_PORTNAME_1 "click_0"
+#define RCD_JK_OUTPUT_PORTNAME_2 "click_1"
+
+#define RCD_WAIT_TIMEOUT_MS 100
 #define RCD_SIG_CHANGE_COUNT 4
 
 #define RCD_FRAME_SIZE sizeof(float)
@@ -103,6 +106,9 @@ Recorder::Recorder(QString jackName)
     jackInputPort1 = jack_port_register (jackClient, RCD_JK_INPUT_PORTNAME_1, JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
     jackInputPort2 = jack_port_register (jackClient, RCD_JK_INPUT_PORTNAME_2, JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
 
+    jackOutputPort1 = jack_port_register (jackClient, RCD_JK_OUTPUT_PORTNAME_1, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+    jackOutputPort2 = jack_port_register (jackClient, RCD_JK_OUTPUT_PORTNAME_2, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+
     jack_set_process_callback(jackClient, jack_process, this);
     jack_set_sync_callback(jackClient, jack_sync, this);
     jack_on_shutdown (jackClient, jack_shutdown, this);
@@ -148,6 +154,7 @@ int Recorder::jackSync(jack_transport_state_t state, jack_position_t *pos)
         setRecording(false);
     else if (state == JackTransportStarting)
         setRecording(true);
+    bpm = pos->beats_per_minute;
     return TRUE;
 }
 
@@ -202,6 +209,10 @@ void Recorder::jackShutdown()
 // Recorder public methods
 //=============================================================================
 
+int Recorder::getBPM()
+{
+    return bpm;
+}
 
 //=============================================================================
 // Recorder internal methods
@@ -293,11 +304,39 @@ void Recorder::run()
         dataReady.wait(&dataReadyMutex, RCD_WAIT_TIMEOUT_MS);
     }
 
-    // to be shure that file is closed
+    // to be sure that file is closed
     closeFile();
 
-    // stop jack incomming sound
+    // stop jack incoming sound
     jack_deactivate(jackClient);
+}
+
+void Recorder::startTransport()
+{
+    jack_transport_start(jackClient);
+}
+
+void Recorder::startTransportTimer()
+{
+    leadinCount = 0;
+
+    // TODO - error catch
+    if (bpm == 0)
+        return;
+    //start timer
+    int timerDelay = bpm / 60 * 1000;
+    timer = new QTimer(this);
+    // TODO connect(timer, SIGNAL(timeout()), this, this->updateTimer());
+    timer->start(timerDelay);
+
+
+
+}
+
+void Recorder::updateTimer()
+{
+    leadinCount++;
+    //TODO connect(timer, SIGNAL(timeout()), this, this->updateTimer());
 }
 
 void Recorder::computePauseActivationMax() {
