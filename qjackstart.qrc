@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/qjackstart">
+        <file>record-red.png</file>
+        <file>record-green.png</file>
+        <file>record-orange.png</file>
+        <file>qjackstart.png</file>
+    </qresource>
+</RCC>

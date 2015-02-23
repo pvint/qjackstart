@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=QJackStart
+Comment=A simple Jack recorder
+Exec=qjackstart
+Icon=qjackstart
+Terminal=false
+Type=Application
+Categories=Application;AudioVideo;Audio;
