@@ -42,8 +42,8 @@
 // Internal defines
 //=============================================================================
 
-#define RCD_JK_INPUT_PORTNAME_1 "record_1"
-#define RCD_JK_INPUT_PORTNAME_2 "record_2"
+#define RCD_JK_INPUT_PORTNAME_1 "monitor_0"
+#define RCD_JK_INPUT_PORTNAME_2 "monitor_1"
 
 #define RCD_WAIT_TIMEOUT_MS 1000
 #define RCD_SIG_CHANGE_COUNT 4
@@ -120,8 +120,6 @@ Recorder::Recorder(QString jackName)
     setRecording(false);
     setShutdown(false);
     setSplitMode(false);
-    setPauseActivationDelay(3);
-    setPauseLevel(-20);
 
     // start the recorder thread
     start();

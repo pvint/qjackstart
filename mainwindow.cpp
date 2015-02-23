@@ -37,24 +37,20 @@ MainWindow::MainWindow(Recorder *recorder, QWidget *parent)
     // the recorder given by the application.
     this->recorder = recorder;
 
-    iconGreen = new QIcon(":/qjackstart/record-green.png");
-    iconRed = new QIcon(":/qjackstart/record-red.png");
-    iconOrange= new QIcon(":/qjackstart/record-orange.png");
+    //iconGreen = new QIcon(":/qjackstart/record-green.png");
+    //iconRed = new QIcon(":/qjackstart/record-red.png");
+    //iconOrange= new QIcon(":/qjackstart/record-orange.png");
 
     ui->setupUi(this);
 
     ui->vuMeter->setColorBack(palette().window().color());
 
-    ui->postActionCombo->addItem("OGG","sox ${0} ${0%%wav}ogg");
-    ui->postActionCombo->addItem("MP3","sox ${0} ${0%%wav}mp3");
 
     readSettings();
 
-    ui->pauseLevelSpin->setValue(recorder->getPauseLevel());
-    ui->pauseDelaySpin->setValue(recorder->getPauseActivationDelay());
-    ui->pauseSplitCheck->setChecked(recorder->isSplitMode());
+    ui->thresholdLevelSpin->setValue(recorder->getPauseLevel());
+
     ui->vuMeter->setCompLevel(recorder->getPauseLevel());
-    ui->postCmdEdit->setText(recorder->getProcessCmdLine());
     ui->statusBar->showMessage(tr("Ready"));
 
     connect(recorder, SIGNAL(statusChanged()), this, SLOT(onRecorderStatusChanged()));
@@ -62,9 +58,6 @@ MainWindow::MainWindow(Recorder *recorder, QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    delete iconGreen;
-    delete iconRed;
-    delete iconOrange;
     delete ui;
 }
 
@@ -73,15 +66,13 @@ MainWindow::~MainWindow()
 // Events methods
 //=============================================================================
 
-void MainWindow::on_recButton_clicked()
+void MainWindow::on_monitorButton_clicked()
 {    
-    recorder->setRecording(!recorder->isRecording());
+    // FIXME
+    //recorder->setRecording(!recorder->isRecording());
 }
 
-void MainWindow::on_pauseDelaySpin_valueChanged(double secs)
-{
-    recorder->setPauseActivationDelay(secs);
-}
+
 
 void MainWindow::on_pauseLevelSpin_valueChanged(double level)
 {
@@ -99,46 +90,26 @@ void MainWindow::onRecorderStatusChanged()
         ui->vuMeter->setLeftLevel(recorder->getLeftLevel());
         ui->vuMeter->setRightLevel(recorder->getRightLevel());
         ui->dbLabel->setText(QString::number(floor(recorder->getRightLevel())) + " dB");
-        ui->recDiskProgress->setValue(recorder->getDiskSpace());
-        if (ui->recFileEdit->text() != recorder->getCurrentFilePath())
-            ui->recFileEdit->setText(recorder->getCurrentFilePath());
-        if (ui->postLastEdit->text() != recorder->getProcessFilePath())
-            ui->postLastEdit->setText(recorder->getProcessFilePath());
+
         if (recorder->isRecording()) {
             if (recorder->isPaused()) {
-                ui->recButton->setIcon(*iconOrange);
                 ui->statusBar->showMessage(tr("Waiting for sound..."));
             }
             else {
-                ui->recButton->setIcon(*iconRed);
                 ui->statusBar->showMessage(tr("Recording..."));
             }
         }
         else {
-            ui->recButton->setIcon(*iconGreen);
             ui->statusBar->showMessage(tr("Ready"));
         }
     }
 }
 
-void MainWindow::on_pauseSplitCheck_stateChanged(int value)
-{
-    recorder->setSplitMode(value != 0);
-}
 
-void MainWindow::on_postActionCombo_currentIndexChanged(int index)
-{
-    ui->postCmdEdit->setText(ui->postActionCombo->itemData(index).toString());
-}
-
-void MainWindow::on_postCmdEdit_textChanged(QString text)
-{
-    recorder->setProcessCmdLine(text);
-}
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    writeSettings();
+    // TODO - save defaults writeSettings();
     event->accept();
 }
 

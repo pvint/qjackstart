@@ -62,11 +62,7 @@ private:
 
 private slots:
     void on_pauseLevelSpin_valueChanged(double );
-    void on_pauseDelaySpin_valueChanged(double );
-    void on_recButton_clicked();
-    void on_pauseSplitCheck_stateChanged(int );
-    void on_postActionCombo_currentIndexChanged(int index);
-    void on_postCmdEdit_textChanged(QString );
+    void on_monitorButton_clicked();
 
     void onRecorderStatusChanged();
 };
