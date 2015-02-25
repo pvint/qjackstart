@@ -37,14 +37,15 @@ public:
     QFrame *tabRecord;
     QGridLayout *gridLayout_2;
     QGridLayout *gridLayout_4;
-    QLabel *dbLabel;
-    QDoubleSpinBox *thresholdLevelSpin;
-    QToolButton *monitorButton;
     QJRMeter *vuMeter;
     QLabel *pauseLevelLabel;
+    QDoubleSpinBox *thresholdLevelSpin;
+    QToolButton *monitorButton;
     QLabel *bpmLabel;
     QLabel *leadinBarsLabel;
     QSpinBox *leadinBeatsSpinBox;
+    QLabel *dbLabel;
+    QLabel *beatLabel;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -96,11 +97,18 @@ public:
         gridLayout_4 = new QGridLayout();
         gridLayout_4->setSpacing(6);
         gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
-        dbLabel = new QLabel(tabRecord);
-        dbLabel->setObjectName(QString::fromUtf8("dbLabel"));
-        dbLabel->setMinimumSize(QSize(80, 0));
+        vuMeter = new QJRMeter(tabRecord);
+        vuMeter->setObjectName(QString::fromUtf8("vuMeter"));
+        sizePolicy1.setHeightForWidth(vuMeter->sizePolicy().hasHeightForWidth());
+        vuMeter->setSizePolicy(sizePolicy1);
+        vuMeter->setMinimumSize(QSize(20, 0));
 
-        gridLayout_4->addWidget(dbLabel, 1, 2, 3, 1);
+        gridLayout_4->addWidget(vuMeter, 1, 4, 3, 1);
+
+        pauseLevelLabel = new QLabel(tabRecord);
+        pauseLevelLabel->setObjectName(QString::fromUtf8("pauseLevelLabel"));
+
+        gridLayout_4->addWidget(pauseLevelLabel, 1, 0, 1, 1);
 
         thresholdLevelSpin = new QDoubleSpinBox(tabRecord);
         thresholdLevelSpin->setObjectName(QString::fromUtf8("thresholdLevelSpin"));
@@ -123,19 +131,6 @@ public:
 
         gridLayout_4->addWidget(monitorButton, 3, 0, 1, 1);
 
-        vuMeter = new QJRMeter(tabRecord);
-        vuMeter->setObjectName(QString::fromUtf8("vuMeter"));
-        sizePolicy1.setHeightForWidth(vuMeter->sizePolicy().hasHeightForWidth());
-        vuMeter->setSizePolicy(sizePolicy1);
-        vuMeter->setMinimumSize(QSize(20, 0));
-
-        gridLayout_4->addWidget(vuMeter, 1, 3, 3, 1);
-
-        pauseLevelLabel = new QLabel(tabRecord);
-        pauseLevelLabel->setObjectName(QString::fromUtf8("pauseLevelLabel"));
-
-        gridLayout_4->addWidget(pauseLevelLabel, 1, 0, 1, 1);
-
         bpmLabel = new QLabel(tabRecord);
         bpmLabel->setObjectName(QString::fromUtf8("bpmLabel"));
 
@@ -151,6 +146,17 @@ public:
         leadinBeatsSpinBox->setValue(4);
 
         gridLayout_4->addWidget(leadinBeatsSpinBox, 2, 1, 1, 1);
+
+        dbLabel = new QLabel(tabRecord);
+        dbLabel->setObjectName(QString::fromUtf8("dbLabel"));
+        dbLabel->setMinimumSize(QSize(80, 0));
+
+        gridLayout_4->addWidget(dbLabel, 1, 3, 3, 1);
+
+        beatLabel = new QLabel(tabRecord);
+        beatLabel->setObjectName(QString::fromUtf8("beatLabel"));
+
+        gridLayout_4->addWidget(beatLabel, 3, 2, 1, 1);
 
 
         gridLayout_2->addLayout(gridLayout_4, 2, 0, 1, 1);
@@ -172,11 +178,12 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "QJackStart", 0, QApplication::UnicodeUTF8));
         actionExit->setText(QApplication::translate("MainWindow", "Exit", 0, QApplication::UnicodeUTF8));
-        dbLabel->setText(QApplication::translate("MainWindow", "TextLabel", 0, QApplication::UnicodeUTF8));
-        monitorButton->setText(QApplication::translate("MainWindow", "Monitor", 0, QApplication::UnicodeUTF8));
         pauseLevelLabel->setText(QApplication::translate("MainWindow", "Threshold (dB)", 0, QApplication::UnicodeUTF8));
+        monitorButton->setText(QApplication::translate("MainWindow", "Monitor", 0, QApplication::UnicodeUTF8));
         bpmLabel->setText(QApplication::translate("MainWindow", "TextLabel", 0, QApplication::UnicodeUTF8));
         leadinBarsLabel->setText(QApplication::translate("MainWindow", "Lead-in (Beats)", 0, QApplication::UnicodeUTF8));
+        dbLabel->setText(QApplication::translate("MainWindow", "TextLabel", 0, QApplication::UnicodeUTF8));
+        beatLabel->setText(QApplication::translate("MainWindow", "--", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

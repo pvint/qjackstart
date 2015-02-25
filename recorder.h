@@ -118,7 +118,7 @@ protected:
     bool isFile() { return sndFile != NULL; }
     bool isPauseLevel() { return leftLevel <= pauseLevel && rightLevel <= pauseLevel; }
     void setShutdown(bool value) { shutdown = value; }
-    void updateTimer();
+
 
 public:
 
@@ -165,6 +165,8 @@ public:
     float getRightLevel() { return rightLevel; }
     float getCompLevel() { return fmaxf(rightLevel, leftLevel); }
 
+public slots:
+    void updateTimer(int count);
 
 signals:
     void statusChanged();

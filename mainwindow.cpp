@@ -57,6 +57,15 @@ MainWindow::MainWindow(Recorder *recorder, QWidget *parent)
 
     // Note: this works... use for flashing this->setStyleSheet("background-color:black;");
     connect(recorder, SIGNAL(statusChanged()), this, SLOT(onRecorderStatusChanged()));
+
+    timer = new QTimer(this);
+    beat = 1;
+
+    // setup signal and slot
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateBeat()));
+
+    timer->setSingleShot(true);
+    //timer->start(1000);
 }
 
 MainWindow::~MainWindow()
@@ -71,7 +80,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_monitorButton_clicked()
 {    
+
     recorder->setMonitoring(!recorder->isMonitoring());
+
 }
 
 
@@ -80,6 +91,27 @@ void MainWindow::on_pauseLevelSpin_valueChanged(double level)
 {
     recorder->setPauseLevel(level);
     ui->vuMeter->setCompLevel(level);
+}
+
+// the slot for leadin beats
+void MainWindow::updateBeat()
+{
+    // restart timer if not done
+    if (beat <= ui->leadinBeatsSpinBox->value())
+    {
+        ui->beatLabel->setText(QString::number(beat));
+        beat++;
+        timer->start(1000);
+    }
+    else
+    {
+        // this is the starting beat - start the transport
+        ui->statusBar->showMessage(tr("Starting..."));
+        recorder->startTransport();
+
+        // reset the monitor button
+        ui->monitorButton->setChecked(false);
+    }
 }
 
 // the timer slot show recorder state regularly
@@ -102,7 +134,16 @@ void MainWindow::onRecorderStatusChanged()
             {
                 ui->statusBar->showMessage(tr("Lead in"));
                 recorder->leadinBeats = ui->leadinBeatsSpinBox->value();
-                recorder->startTransportTimer();
+                //recorder->startTransportTimer();
+                // get the beat time in ms
+                int t = recorder->getBPM();
+
+                // what to do if it's zero??
+                if (t == 0)
+                    t = 100;    // defaulting to 100 for now...
+
+                t = t * 60 / 1000;
+                timer->start(t);
                 recorder->setMonitoring(false);
             }
 

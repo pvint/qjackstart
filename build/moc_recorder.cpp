@@ -22,7 +22,7 @@ static const uint qt_meta_data_Recorder[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       1,   14, // methods
+       2,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -32,11 +32,15 @@ static const uint qt_meta_data_Recorder[] = {
  // signals: signature, parameters, type, tag, flags
       10,    9,    9,    9, 0x05,
 
+ // slots: signature, parameters, type, tag, flags
+      32,   26,    9,    9, 0x0a,
+
        0        // eod
 };
 
 static const char qt_meta_stringdata_Recorder[] = {
-    "Recorder\0\0statusChanged()\0"
+    "Recorder\0\0statusChanged()\0count\0"
+    "updateTimer(int)\0"
 };
 
 void Recorder::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -46,10 +50,10 @@ void Recorder::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         Recorder *_t = static_cast<Recorder *>(_o);
         switch (_id) {
         case 0: _t->statusChanged(); break;
+        case 1: _t->updateTimer((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     }
-    Q_UNUSED(_a);
 }
 
 const QMetaObjectExtraData Recorder::staticMetaObjectExtraData = {
@@ -84,9 +88,9 @@ int Recorder::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 1)
+        if (_id < 2)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 1;
+        _id -= 2;
     }
     return _id;
 }

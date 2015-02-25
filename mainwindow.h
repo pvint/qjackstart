@@ -51,6 +51,7 @@ public:
     void closeEvent(QCloseEvent *event);
     void readSettings();
     void writeSettings();
+    QTimer *timer;
 
 private:
     Ui::MainWindow *ui;
@@ -58,7 +59,12 @@ private:
     QIcon *iconGreen;
     QIcon *iconRed;
     QIcon *iconOrange;
+    int beat;
+    int leadinBeats;
 
+
+public slots:
+    void updateBeat();
 
 private slots:
     void on_pauseLevelSpin_valueChanged(double );

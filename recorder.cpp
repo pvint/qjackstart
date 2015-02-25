@@ -322,20 +322,25 @@ void Recorder::startTransportTimer()
 
     // TODO - error catch
     if (bpm == 0)
+    {
         return;
+    }
+
     //start timer
     int timerDelay = bpm / 60 * 1000;
     timer = new QTimer(this);
-    // TODO connect(timer, SIGNAL(timeout()), this, this->updateTimer());
-    timer->start(timerDelay);
+
+    //connect(timer, SIGNAL(timeout()), this, SLOT(updateBeat(leadinCount++)));
+
+    //timer->start(timerDelay);
 
 
 
 }
 
-void Recorder::updateTimer()
+void Recorder::updateTimer(int count)
 {
-    leadinCount++;
+
     //TODO connect(timer, SIGNAL(timeout()), this, this->updateTimer());
 }
 
@@ -479,7 +484,7 @@ void Recorder::setJackConnections(QString cnxLine, jack_port_t* jackPort) {
 void Recorder::checkJackAutoConnect() {
     while (!jackPortRegQueue.empty()) {
         jack_port_t* port = jack_port_by_id(jackClient, jackPortRegQueue.dequeue());
-        if (jack_port_flags(port) & JackPortIsOutput) {
+        if ((jack_port_flags(port) & JackPortIsOutput) && (jack_port_flags(port) & JackPortIsPhysical)) {
             QString portName = jack_port_name(port);
             if (jack_port_connected(jackInputPort1) == 0)
                 jack_connect(jackClient, portName.toAscii().constData(), jack_port_name(jackInputPort1) );
